@@ -1,6 +1,14 @@
 import { DateTime } from 'luxon'
 import Hash from '@ioc:Adonis/Core/Hash'
-import { column, beforeSave, BaseModel, ManyToMany, manyToMany, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import {
+  column,
+  beforeSave,
+  BaseModel,
+  ManyToMany,
+  manyToMany,
+  hasMany,
+  HasMany,
+} from '@ioc:Adonis/Lucid/Orm'
 import Group from 'App/Models/Group'
 import Expense from 'App/Models/Expense'
 
@@ -38,16 +46,23 @@ export default class User extends BaseModel {
 
   @manyToMany(() => Expense, {
     pivotTable: 'user_expenses',
-    pivotForeignKey: 'user_id',
-    pivotRelatedForeignKey: 'expense_id',
+    pivotForeignKey: 'expense_id',
+    pivotRelatedForeignKey: 'user_id',
     pivotColumns: ['amount', 'is_paid']
   })
   public borrowings: ManyToMany<typeof Expense>
 
+  @column()
+  public amount: number
+
+  @column()
+  public is_paid: boolean
+
   @hasMany(() => Expense, {
-    foreignKey: 'lender_id'
+    foreignKey: 'lender',
+    localKey: 'expenses'
   })
-  public lendings: HasMany<typeof Expense>
+  public expenses: HasMany<typeof Expense>
 
   @beforeSave()
   public static async hashPassword (user: User) {

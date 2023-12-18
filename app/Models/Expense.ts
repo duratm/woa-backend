@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, manyToMany, ManyToMany, hasOne, HasOne } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, column, manyToMany, ManyToMany, belongsTo, BelongsTo} from '@ioc:Adonis/Lucid/Orm'
 import User from 'App/Models/User'
 import Group from 'App/Models/Group'
 
@@ -10,6 +10,12 @@ export default class Expense extends BaseModel {
   @column()
   name: string
 
+  @column()
+  amount: number
+
+  @column()
+  isPaid: boolean
+
   @manyToMany(() => User, {
     pivotTable: 'user_expenses',
     pivotForeignKey: 'expense_id',
@@ -18,13 +24,19 @@ export default class Expense extends BaseModel {
   })
   public borrowers: ManyToMany<typeof User>
 
-  @hasOne(() => User, {
-    foreignKey: 'lender_id'
+  @belongsTo(() => User, {
+    foreignKey: 'lenderId',
   })
-  public lender: HasOne<typeof User>
+  public lender: BelongsTo<typeof User>
 
-  @hasOne(() => Group)
-  public group: HasOne<typeof Group>
+  @column()
+  public lenderId: number
+
+  @belongsTo(() => Group)
+  public group: BelongsTo<typeof Group>
+
+  @column()
+  public groupId: number
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

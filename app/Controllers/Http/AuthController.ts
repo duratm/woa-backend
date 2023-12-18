@@ -4,6 +4,10 @@ import Env from '@ioc:Adonis/Core/Env'
 import * as console from 'console'
 
 export default class AuthController {
+
+  public async me({ auth, response }: HttpContextContract) {
+    return response.ok(auth.user)
+  }
   public async login({ auth, request, response }: HttpContextContract) {
     const email = request.input('email')
     const password = request.input('password')
@@ -14,7 +18,7 @@ export default class AuthController {
         Env.get('API_TOKEN_COOKIE_NAME'),
         token.toJSON().token,
         {maxAge: 60 * 60 * 24 * 7, secure: true, httpOnly: true, sameSite: 'none'})
-      return response.ok(auth.user)
+      return response.ok(await User.findBy("username", auth.user?.username))
     } catch (error) {
       console.log(error)
       return response.unauthorized({ error: 'Invalid credentials' })
@@ -36,23 +40,24 @@ export default class AuthController {
     if (auth.isLoggedIn) {
       return response.unauthorized({error: 'You are already logged in'})
     }
-    const email = request.input('email')
-    const password = request.input('password')
-    const username = request.input('username') || ""
-    const avatarUrl = request.input('avatarUrl')
+    const data = JSON.parse(request.raw() ?? "{}")
+    const email = data.email
+    const password = data.password
+    const username = data.username
+    const avatarUrl = data.avatarUrl
     const userMail = await User.findBy('email', email)
     const useUsername = await User.findBy('username', username)
-    if (userMail != null || useUsername != null) {
+    if (userMail != null || useUsername != null || data == {}) {
       return response.unauthorized({error: 'User already exists'})
     }
     else {
-      await User.create({ email, password, avatarUrl, username })
-      const token = await auth.use('api').attempt(email, password)
+      const user = await User.create({ email, password, avatarUrl, username })
+      const token = await auth.use('api').attempt(email, password, {expiresIn: '3 hours'})
       response.cookie(
         Env.get('API_TOKEN_COOKIE_NAME'),
         token.toJSON().token,
         {maxAge: 60 * 60 * 24 * 7, secure: true, httpOnly: true, sameSite: 'none'})
+      return response.ok(user)
     }
-    return response.ok(auth.user)
   }
 }

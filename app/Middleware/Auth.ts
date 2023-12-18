@@ -49,6 +49,7 @@ export default class AuthMiddleware {
     /**
      * Unable to authenticate using any guard
      */
+    console.log(guardLastAttempted)
     throw new AuthenticationException(
       'Unauthorized access',
       'E_UNAUTHORIZED_ACCESS',

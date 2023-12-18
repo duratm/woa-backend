@@ -3,9 +3,12 @@ import User from 'App/Models/User'
 
 export default class UserController {
 
-  public async index({ response }: HttpContextContract) {
-    const users = await User.all()
-    response.send(JSON.stringify(users))
+  public async index(HttpContextContract : HttpContextContract) {
+    let users = {}
+    if (HttpContextContract.auth.user) {
+      users = await User.query().select('id', 'username', 'avatar_url').whereNot('id', HttpContextContract.auth.user.id)
+    }
+    HttpContextContract.response.send(JSON.stringify(users))
   }
 
 }

@@ -21,9 +21,9 @@ export default class Group extends BaseModel {
     pivotForeignKey: 'group_id',
     pivotRelatedForeignKey: 'user_id'
   })
-  public User: ManyToMany<typeof User>
+  public users: ManyToMany<typeof User>
 
   @hasMany(() => Expense)
-  public Expense: HasMany<typeof Expense>
+  public expenses: HasMany<typeof Expense>
 
 }

@@ -25,6 +25,10 @@ Route.get('/hello', async () => {
 
 })
 
+Route.group(() => {
+  Route.get('/me', 'AuthController.me')
+}).prefix('/auth').middleware('auth')
+
 Route.post('/login', 'AuthController.login')
 
 Route.post('/register', 'AuthController.register')
@@ -43,5 +47,9 @@ Route.post('/groups/delete', 'GroupController.destroy').middleware('auth')
 
 Route.post('/users/all', 'UserController.index').middleware('auth')
 
-Route.post('/groups/show', 'GroupController.show').middleware('auth')
+Route.get('/groups/show/:id', 'GroupController.show').middleware('auth')
+
+Route.get('/groups/show/users/:id', 'GroupController.showUsers').middleware('auth')
+
+Route.get('/groups/update', 'GroupController.update').middleware('auth')
 
