@@ -24,7 +24,7 @@ export default class GroupController {
       await group.related('users').attach([user.id])
     }
     await httpContextContract.auth.user?.related('groups').attach([group.id])
-    return this.index(httpContextContract)
+    return httpContextContract.response.created(group)
   }
 
   public async addMember(httpContextContract: HttpContextContract) {
