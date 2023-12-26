@@ -26,32 +26,44 @@ Route.get('/hello', async () => {
 })
 
 Route.group(() => {
-  Route.get('/me', 'AuthController.me')
-}).prefix('/auth').middleware('auth')
+  Route.get('/', 'AuthController.login')
+  Route.post('/', 'AuthController.register')
 
-Route.post('/login', 'AuthController.login')
+  Route.group(() => {
+    Route.get('/logout', 'AuthController.logout')
+    Route.get('/', 'AuthController.me')
+  }).prefix('/me').middleware('auth')
 
-Route.post('/register', 'AuthController.register')
+}).prefix('/auth')
 
-Route.post('/logout', 'AuthController.logout').middleware('auth')
 
-Route.post('/groups', 'GroupController.index').middleware('auth')
 
-Route.post('/groups/create', 'GroupController.store').middleware('auth')
+Route.group(() => {
 
-Route.post('/groups/addMember', 'GroupController.addMember').middleware('auth')
+  Route.group(() => {
+    Route.get('/', 'GroupController.index')
+    Route.post('/', 'GroupController.store')
+    Route.patch('/', 'GroupController.update')
+    Route.delete('/', 'GroupController.destroy')
+    Route.group(() => {
+      Route.patch('/', 'GroupController.addMember')
+      Route.delete('/', 'GroupController.removeMember')
+    }).prefix('/members')
+    Route.group(() => {
+      Route.get('/:id', 'GroupController.show')
+      Route.get('/users/:id', 'GroupController.showUsers')
+    }).prefix('/show')
+  }).prefix('/groups')
 
-Route.post('/groups/removeMember', 'GroupController.removeMember').middleware('auth')
+  Route.group(() => {
+    Route.post('/', 'ExpenseController.store')
+  }).prefix('/expenses')
 
-Route.post('/groups/delete', 'GroupController.destroy').middleware('auth')
+  Route.group(() => {
+    Route.get('/', 'UserController.index')
+  }).prefix('/users')
 
-Route.post('/users/all', 'UserController.index').middleware('auth')
+}).prefix('/api').middleware('auth')
 
-Route.get('/groups/show/:id', 'GroupController.show').middleware('auth')
 
-Route.get('/groups/show/users/:id', 'GroupController.showUsers').middleware('auth')
-
-Route.get('/groups/update', 'GroupController.update').middleware('auth')
-
-Route.put('/groups/expense/create', 'ExpenseController.store').middleware('auth')
 
