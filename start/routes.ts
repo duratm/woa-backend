@@ -53,3 +53,5 @@ Route.get('/groups/show/users/:id', 'GroupController.showUsers').middleware('aut
 
 Route.get('/groups/update', 'GroupController.update').middleware('auth')
 
+Route.put('/groups/expense/create', 'ExpenseController.store').middleware('auth')
+

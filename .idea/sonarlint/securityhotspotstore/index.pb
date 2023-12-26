@@ -99,3 +99,5 @@ D
 config/bodyparser.ts,7/3/73261f6056f2d4478e188ecf984580d73cd37b20
 Z
 *database/migrations/1700725720000_users.ts,8/3/834588025312d01630996aa1da374b6477b6c20e
+Y
+)app/Controllers/Http/ExpenseController.ts,1/9/191ed76ce698c54175f8e154a82efc80278c0997
