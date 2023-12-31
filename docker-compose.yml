@@ -14,9 +14,9 @@ services:
     ports:
       - 5432:5432
 
-  woa-backend:
-    image: woa-backend:dev
-    container_name: woa-backend
+  pycount-backend:
+    image: pycount-backend:dev
+    container_name: pycount-backend
     restart: always
     depends_on:
       - postgres

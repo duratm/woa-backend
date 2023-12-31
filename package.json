@@ -1,5 +1,5 @@
 {
-  "name": "woa-backend",
+  "name": "pycount-backend",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
     "test": "node ace test",
     "lint": "eslint . --ext=.ts",
     "format": "prettier --write .",
-    "dockerAttach": "docker exec -it woa-backend /bin/sh",
+    "dockerAttach": "docker exec -it pycount-backend /bin/sh",
     "dockerAttachPostgres": "docker exec -it postgres /bin/sh"
   },
   "eslintConfig": {
