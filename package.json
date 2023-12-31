@@ -8,7 +8,9 @@
     "start": "node server.js",
     "test": "node ace test",
     "lint": "eslint . --ext=.ts",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "dockerAttach": "docker exec -it woa-backend /bin/sh",
+    "dockerAttachPostgres": "docker exec -it postgres /bin/sh"
   },
   "eslintConfig": {
     "extends": [

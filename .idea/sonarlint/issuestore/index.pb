@@ -101,3 +101,21 @@ Z
 *database/migrations/1700725720000_users.ts,8/3/834588025312d01630996aa1da374b6477b6c20e
 Y
 )app/Controllers/Http/ExpenseController.ts,1/9/191ed76ce698c54175f8e154a82efc80278c0997
+:
+
+Dockerfile,6/6/6651ddff6eb82c840ced7c1dddee15c6e1913dd4
+=
+.dockerignore,0/5/05a721ebe3ba0754116825ed1359ff1785f4bbac
+R
+"dockerConfig/postgres-dev-init.sql,7/0/701063d9475e46b65c1936e0f66f5bb0e2909ccf
+=
+dockercompose,5/e/5e064bee5ebc935857100954a3aa7049f78ebdb1
+B
+docker-compose.yml,3/5/35b8c13cf2eb2a194eada000eb310d65aed53b2a
+9
+	server.ts,f/4/f4a1c3b7616416efb8b1a15d63f7ba423c06a370
+<
+package.json,7/0/7030d0b2f71b999ff89a343de08c414af32fc93a
+:
+
+.gitignore,a/5/a5cc2925ca8258af241be7e5b0381edf30266302
