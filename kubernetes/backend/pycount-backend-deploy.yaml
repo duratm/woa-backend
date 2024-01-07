@@ -13,7 +13,7 @@ spec:
         app: pycout-backend
     spec:
       containers:
-        - name: my-application-back
+        - name: pycount-backend-deploy
           ## docker.pkg.github.com/thebylito/adonis-v5-demo-k8s/my-application-back:VERSAO
           ## nesse caso nao e preciso especificar 'imagePullSecrets'
           image: duratm/pycount-backend:dev
