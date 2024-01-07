@@ -9,3 +9,5 @@ data:
   PORT: '3333'
   HOST: '0.0.0.0'
   NODE_ENV: "production"
+  API_TOKEN_COOKIE_NAME: "token"
+

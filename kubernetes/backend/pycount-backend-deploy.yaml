@@ -30,7 +30,7 @@ spec:
               port: 3333
           envFrom:
             - configMapRef:
-                name: pycount-backend-conf
+              name: pycount-database-conf
           # Ativar apenas apos configuracao da base de dados
           lifecycle:
             postStart:
@@ -40,5 +40,5 @@ spec:
                   [
                     "/bin/sh",
                     "-c",
-                    "MYSQL_READ_HOST=$MYSQL_HOST node ace migration:run --force",
+                    "node ace migration:run --force",
                   ]
