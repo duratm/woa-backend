@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pycount-backend-deploy
+  namespace: pycount
+spec:
+  selector:
+    matchLabels:
+      app: pycount-backend
+  template:
+    metadata:
+      labels:
+        app: pycout-backend
+    spec:
+      containers:
+        - name: my-application-back
+          ## docker.pkg.github.com/thebylito/adonis-v5-demo-k8s/my-application-back:VERSAO
+          ## nesse caso nao e preciso especificar 'imagePullSecrets'
+          image: duratm/pycount-backend:dev
+          imagePullPolicy: "Always"
+          ports:
+            - containerPort: 3333
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 3333
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3333
+          envFrom:
+            - configMapRef:
+                name: pycount-backend-conf
+          # Ativar apenas apos configuracao da base de dados
+          lifecycle:
+            postStart:
+              exec:
+                # Lance la migration
+                command:
+                  [
+                    "/bin/sh",
+                    "-c",
+                    "MYSQL_READ_HOST=$MYSQL_HOST node ace migration:run --force",
+                  ]

@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres  # Sets Deployment name
+  namespace: pycount
+spec:
+  selector:
+    matchLabels:
+      app: pycount-database
+  template:
+    metadata:
+      labels:
+        app: pycount-database
+    spec:
+      containers:
+        - name: pycount-database  # Sets container name
+          image: postgres:13 # Sets Image
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432  # Exposes container port
+          envFrom:
+            - configMapRef:
+                name: pycount-database-conf
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: woa
+      volumes:
+        - name: woa
+          persistentVolumeClaim:
+            claimName: pycount-database-pvc
