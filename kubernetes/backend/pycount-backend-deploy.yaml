@@ -22,13 +22,4 @@ spec:
             - configMapRef:
                 name: pycount-database-conf
           # Ativar apenas apos configuracao da base de dados
-          lifecycle:
-            postStart:
-              exec:
-                # Lance la migration
-                command:
-                  [
-                    "/bin/sh",
-                    "-c",
-                    "node ace migration:run --force",
-                  ]
+
