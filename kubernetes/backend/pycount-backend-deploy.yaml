@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: pycount-backend-deploy
@@ -10,7 +10,7 @@ spec:
   template:
     metadata:
       labels:
-        app: pycout-backend
+        app: pycount-backend
     spec:
       containers:
         - name: pycount-backend-deploy
@@ -20,7 +20,7 @@ spec:
             - containerPort: 3333
           envFrom:
             - configMapRef:
-              name: pycount-database-conf
+                name: pycount-database-conf
           # Ativar apenas apos configuracao da base de dados
           lifecycle:
             postStart:
