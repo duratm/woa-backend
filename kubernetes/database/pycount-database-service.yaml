@@ -7,7 +7,12 @@ metadata:
     app: pycount-database # Labels and Selectors
 spec:
   type: NodePort # Sets service type
-  ports:
-    - port: 5432 # Sets port to run the postgres application
   selector:
     app: pycount-database
+  ports:
+    - name: postgres # Sets port name
+      protocol: TCP
+      targetPort: 5432 # Sets target port
+      nodePort: 30000 # Sets node port
+      port: 5432 # Sets port to run the postgres application
+
