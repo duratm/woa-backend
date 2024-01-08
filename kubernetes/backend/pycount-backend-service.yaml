@@ -3,9 +3,14 @@ kind: Service
 metadata:
   name: pycout-backend-svc
   namespace: pycount
+  labels:
+    service: pycount-backend
 spec:
+  type: ClusterIP
   ports:
-    - port: 80
+    - name: http
+      protocol: TCP
+      port: 3333
       targetPort: 3333
   selector:
-    app: pycout-backend
+    app: pycount-backend
