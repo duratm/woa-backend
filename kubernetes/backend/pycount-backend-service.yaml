@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: pycout-backend-svc
+  name: pycount-backend-svc
   namespace: pycount
   labels:
     service: pycount-backend
