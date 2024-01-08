@@ -4,7 +4,6 @@ import Env from '@ioc:Adonis/Core/Env'
 import * as console from 'console'
 
 export default class AuthController {
-
   public async me({ auth, response }: HttpContextContract) {
     return response.ok(auth.user)
   }
@@ -14,11 +13,13 @@ export default class AuthController {
 
     try {
       const token = await auth.use('api').attempt(email, password)
-      response.cookie(
-        Env.get('API_TOKEN_COOKIE_NAME'),
-        token.toJSON().token,
-        {maxAge: 60 * 60 * 24 * 7, secure: true, httpOnly: true, sameSite: 'none'})
-      return response.ok(await User.findBy("username", auth.user?.username))
+      response.cookie(Env.get('API_TOKEN_COOKIE_NAME'), token.toJSON().token, {
+        maxAge: 60 * 60 * 24 * 7,
+        secure: true,
+        httpOnly: true,
+        sameSite: 'none',
+      })
+      return response.ok(await User.findBy('username', auth.user?.username))
     } catch (error) {
       console.log(error)
       return response.unauthorized({ error: 'Invalid credentials' })
@@ -38,25 +39,26 @@ export default class AuthController {
 
   public async register({ auth, request, response }: HttpContextContract) {
     if (auth.isLoggedIn) {
-      return response.unauthorized({error: 'You are already logged in'})
+      return response.unauthorized({ error: 'You are already logged in' })
     }
-    const data = JSON.parse(request.raw() ?? "{}")
+    const data = JSON.parse(request.raw() ?? '{}')
     const email = data.email
     const password = data.password
     const username = data.username
     const avatarUrl = data.avatarUrl
     const userMail = await User.findBy('email', email)
     const useUsername = await User.findBy('username', username)
-    if (userMail != null || useUsername != null || data == {}) {
-      return response.unauthorized({error: 'User already exists'})
-    }
-    else {
+    if (userMail !== null || useUsername !== null || data === {}) {
+      return response.unauthorized({ error: 'User already exists' })
+    } else {
       const user = await User.create({ email, password, avatarUrl, username })
-      const token = await auth.use('api').attempt(email, password, {expiresIn: '3 hours'})
-      response.cookie(
-        Env.get('API_TOKEN_COOKIE_NAME'),
-        token.toJSON().token,
-        {maxAge: 60 * 60 * 24 * 7, secure: true, httpOnly: true, sameSite: 'none'})
+      const token = await auth.use('api').attempt(email, password, { expiresIn: '3 hours' })
+      response.cookie(Env.get('API_TOKEN_COOKIE_NAME'), token.toJSON().token, {
+        maxAge: 60 * 60 * 24 * 7,
+        secure: true,
+        httpOnly: true,
+        sameSite: 'none',
+      })
       return response.ok(user)
     }
   }

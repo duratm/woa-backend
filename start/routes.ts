@@ -22,7 +22,6 @@ import Route from '@ioc:Adonis/Core/Route'
 
 Route.get('/hello', async () => {
   return { hello: 'world' }
-
 })
 
 Route.group(() => {
@@ -32,14 +31,12 @@ Route.group(() => {
   Route.group(() => {
     Route.get('/logout', 'AuthController.logout')
     Route.get('/', 'AuthController.me')
-  }).prefix('/me').middleware('auth')
-
+  })
+    .prefix('/me')
+    .middleware('auth')
 }).prefix('/auth')
 
-
-
 Route.group(() => {
-
   Route.group(() => {
     Route.get('/', 'GroupController.index')
     Route.post('/', 'GroupController.store')
@@ -62,8 +59,6 @@ Route.group(() => {
   Route.group(() => {
     Route.get('/', 'UserController.index')
   }).prefix('/users')
-
-}).prefix('/api').middleware('auth')
-
-
-
+})
+  .prefix('/api')
+  .middleware('auth')

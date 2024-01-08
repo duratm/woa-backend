@@ -3,9 +3,8 @@ kind: Ingress
 metadata:
   name: pycount-minio-ingress
   namespace: pycount
-  annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: web
 spec:
+  ingressClassName: traefik
   rules:
     - http:
         paths:
@@ -17,3 +16,14 @@ spec:
                 port:
                   number: 9000
       host: pycount-minio.duratm.com
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pycount-minio-svc
+                port:
+                  number: 9001
+      host: pycount-minio-admin.duratm.com
+

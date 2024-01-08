@@ -3,14 +3,15 @@ kind: Service
 metadata:
   name: pycount-minio-svc
   namespace: pycount
-  labels:
-    app: pycount-minio
 spec:
-  type: ClusterIP
   ports:
     - name: minio
       protocol: TCP
       port: 9000
       targetPort: 9000
+    - name: minio-admin
+      protocol: TCP
+      port: 9001
+      targetPort: 9001
   selector:
     app: pycount-minio
