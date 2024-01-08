@@ -13,6 +13,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: pycount-frontend-svc
+                name: pycount-backend-svc
                 port:
                   number: 3333
