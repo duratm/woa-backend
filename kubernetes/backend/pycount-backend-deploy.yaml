@@ -21,5 +21,4 @@ spec:
           envFrom:
             - configMapRef:
                 name: pycount-database-conf
-          # Ativar apenas apos configuracao da base de dados
 
