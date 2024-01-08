@@ -16,3 +16,4 @@ spec:
                 name: pycount-backend-svc
                 port:
                   number: 3333
+      host: pycount-api.duratm.com
