@@ -103,7 +103,7 @@ export default driveConfig({
       endpoint: Env.get('S3_ENDPOINT'),
 
       // For minio to work
-      // forcePathStyle: true,
+      forcePathStyle: true,
     },
 
     /*

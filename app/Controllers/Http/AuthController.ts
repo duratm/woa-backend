@@ -2,6 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'
 import Env from '@ioc:Adonis/Core/Env'
 import * as console from 'console'
+import Drive from "@ioc:Adonis/Core/Drive";
 
 export default class AuthController {
   public async me({ auth, response }: HttpContextContract) {
@@ -41,14 +42,27 @@ export default class AuthController {
     if (auth.isLoggedIn) {
       return response.unauthorized({ error: 'You are already logged in' })
     }
-    const data = JSON.parse(request.raw() ?? '{}')
-    const email = data.email
-    const password = data.password
-    const username = data.username
-    const avatarUrl = data.avatarUrl
+    console.log(request.file('avatarUrl'))
+    const image = request.file('avatarUrl')
+    if (image === null) {
+      return response.unauthorized({ error: 'You must provide an avatar' })
+    }
+    await image.moveToDisk(
+      '',
+      {
+        name: request.input('username') + '.' + image.extname,
+        overwrite: true,
+        contentType: image.type,
+      },
+      's3'
+    )
+    const email = request.input('email')
+    const password = request.input('password')
+    const username = request.input('username')
+    const avatarUrl = await Drive.getSignedUrl(request.input('username') + '.' + image.extname)
     const userMail = await User.findBy('email', email)
     const useUsername = await User.findBy('username', username)
-    if (userMail !== null || useUsername !== null || data === {}) {
+    if (userMail !== null || useUsername !== null) {
       return response.unauthorized({ error: 'User already exists' })
     } else {
       const user = await User.create({ email, password, avatarUrl, username })
@@ -59,6 +73,7 @@ export default class AuthController {
         httpOnly: true,
         sameSite: 'none',
       })
+      console.log(user)
       return response.ok(user)
     }
   }
