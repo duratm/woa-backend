@@ -20,7 +20,11 @@ export default class AuthController {
         httpOnly: true,
         sameSite: 'none',
       })
-      return response.ok(await User.findBy('username', auth.user?.username))
+      let user = await User.findBy('username', auth.user?.username)
+      if (user) {
+        user.avatarUrl = await Drive.getSignedUrl(user.avatarUrl)
+      }
+      return response.ok(user)
     } catch (error) {
       console.log(error)
       return response.unauthorized({ error: 'Invalid credentials' })
@@ -44,22 +48,25 @@ export default class AuthController {
     }
     console.log(request.file('avatarUrl'))
     const image = request.file('avatarUrl')
+    let avatarUrl = ''
     if (image === null) {
-      return response.unauthorized({ error: 'You must provide an avatar' })
+      avatarUrl = 'default.png'
+    } else {
+      avatarUrl = request.input('username') + '.' + image.extname
+      await image.moveToDisk(
+        '',
+        {
+          name: avatarUrl,
+          overwrite: true,
+          contentType: image.type,
+        },
+        's3'
+      )
     }
-    await image.moveToDisk(
-      '',
-      {
-        name: request.input('username') + '.' + image.extname,
-        overwrite: true,
-        contentType: image.type,
-      },
-      's3'
-    )
+
     const email = request.input('email')
     const password = request.input('password')
     const username = request.input('username')
-    const avatarUrl = await Drive.getSignedUrl(request.input('username') + '.' + image.extname)
     const userMail = await User.findBy('email', email)
     const useUsername = await User.findBy('username', username)
     if (userMail !== null || useUsername !== null) {
@@ -73,6 +80,7 @@ export default class AuthController {
         httpOnly: true,
         sameSite: 'none',
       })
+      user.avatarUrl = await Drive.getSignedUrl(user.avatarUrl)
       console.log(user)
       return response.ok(user)
     }

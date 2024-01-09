@@ -3,21 +3,26 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import validator from 'validator'
 import isInt = validator.isInt
 import * as console from 'console'
+import Drive from '@ioc:Adonis/Core/Drive'
 
 export default class GroupController {
-
   public async index({ auth, response }: HttpContextContract) {
     const groups = await Group.query()
       .whereHas('users', (query) => {
         query.where('users.id', auth.user?.id!)
       })
       .preload('users')
+    for (const group of groups) {
+      for (const user of group.users) {
+        user.avatarUrl = await Drive.getSignedUrl(user.avatarUrl)
+      }
+    }
     response.send(groups)
   }
 
   public async store(httpContextContract: HttpContextContract) {
-    const name = JSON.parse(httpContextContract.request.raw() ?? "{}").name
-    const users = JSON.parse(httpContextContract.request.raw() ?? "{}").users
+    const name = JSON.parse(httpContextContract.request.raw() ?? '{}').name
+    const users = JSON.parse(httpContextContract.request.raw() ?? '{}').users
     console.log(httpContextContract.request)
     const group = await Group.create({ name })
     for (const user of users) {
@@ -52,30 +57,44 @@ export default class GroupController {
 
   public async show(httpContextContract: HttpContextContract) {
     let groupId = httpContextContract.params.id
-    if (isInt(groupId)){
+    if (isInt(groupId)) {
       groupId = parseInt(groupId)
     }
     const group = await Group.findOrFail(groupId)
-    const expenses = await group.related('expenses').query().preload('borrowers', (borrowersQuery) => {
-      borrowersQuery.pivotColumns(['is_paid', 'amount']).select('users.id', 'user_expenses.is_paid', 'user_expenses.amount')
-    })
+    const expenses = await group
+      .related('expenses')
+      .query()
+      .preload('borrowers', (borrowersQuery) => {
+        borrowersQuery
+          .pivotColumns(['is_paid', 'amount'])
+          .select('users.id', 'user_expenses.is_paid', 'user_expenses.amount')
+      })
     console.log(expenses)
-    return {id: group.id, name : group.name, expenses: expenses}
+    return { id: group.id, name: group.name, expenses: expenses }
   }
 
   public async showUsers(httpContextContract: HttpContextContract) {
     let groupId = httpContextContract.params.id
-    if (isInt(groupId)){
+    if (isInt(groupId)) {
       groupId = parseInt(groupId)
     }
     const group = await Group.findOrFail(groupId)
-    const expenses = await group.related('expenses').query().preload('borrowers', (borrowersQuery) => {
-      borrowersQuery.pivotColumns(['is_paid', 'amount']).select('users.id', 'user_expenses.is_paid', 'user_expenses.amount')
-    })
-    const users = await group.related('users').query().select('users.id', 'users.username', 'users.avatar_url')
+    const expenses = await group
+      .related('expenses')
+      .query()
+      .preload('borrowers', (borrowersQuery) => {
+        borrowersQuery
+          .pivotColumns(['is_paid', 'amount'])
+          .select('users.id', 'user_expenses.is_paid', 'user_expenses.amount')
+      })
+    const users = await group
+      .related('users')
+      .query()
+      .select('users.id', 'users.username', 'users.avatar_url')
+    for (const user of users) {
+      user.avatarUrl = await Drive.getSignedUrl(user.avatarUrl)
+    }
     console.log(expenses)
-    return {groups : {id: group.id, name : group.name, expenses: expenses}, users: users}
+    return { groups: { id: group.id, name: group.name, expenses: expenses }, users: users }
   }
-
-
 }
