@@ -2,7 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'
 import Env from '@ioc:Adonis/Core/Env'
 import * as console from 'console'
-import Drive from "@ioc:Adonis/Core/Drive";
+import Drive from '@ioc:Adonis/Core/Drive'
 
 export default class AuthController {
   public async me({ auth, response }: HttpContextContract) {
@@ -20,10 +20,8 @@ export default class AuthController {
         httpOnly: true,
         sameSite: 'none',
       })
-      let user = await User.findBy('username', auth.user?.username)
-      if (user) {
-        user.avatarUrl = await Drive.getSignedUrl(user.avatarUrl)
-      }
+      let user = await User.findByOrFail('username', auth.user?.username)
+      user.avatarUrl = await Drive.getSignedUrl(user.avatarUrl)
       return response.ok(user)
     } catch (error) {
       console.log(error)
