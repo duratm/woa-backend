@@ -6,6 +6,10 @@ import Drive from '@ioc:Adonis/Core/Drive'
 
 export default class AuthController {
   public async me({ auth, response }: HttpContextContract) {
+    let user = auth.user
+    if (user) {
+      user.avatarUrl = await Drive.getSignedUrl(user.avatarUrl)
+    }
     return response.ok(auth.user)
   }
   public async login({ auth, request, response }: HttpContextContract) {

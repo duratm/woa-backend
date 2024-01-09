@@ -1,6 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'
-import Drive from "@ioc:Adonis/Core/Drive";
+import Drive from '@ioc:Adonis/Core/Drive'
 
 export default class UserController {
   public async index(HttpContextContract: HttpContextContract) {
@@ -11,8 +11,8 @@ export default class UserController {
       for (let user of users) {
         user.avatarUrl = await Drive.getSignedUrl(user.avatarUrl)
       }
-      HttpContextContract.response.send(JSON.stringify(users))
+      return HttpContextContract.response.send(JSON.stringify(users))
     }
-    HttpContextContract.response.unauthorized()
+    return HttpContextContract.response.unauthorized()
   }
 }
