@@ -14,11 +14,10 @@ spec:
     spec:
       containers:
         - name: pycount-backend-deploy
-          image: duratm/pycount-backend:dev
+          image: duratm/pycount-backend:0.1.0-alpha.39
           imagePullPolicy: "Always"
           ports:
             - containerPort: 3333
           envFrom:
             - configMapRef:
                 name: pycount-database-conf
-
