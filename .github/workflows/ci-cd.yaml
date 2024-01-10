@@ -1,9 +1,37 @@
 name: CI/CD
 
-on: push
+on:
+  push:
+    branches:
+      - develop
 
 jobs:
+  calculate-version:
+    if: >
+      contains(github.event.head_commit.message, 'release') &&
+      github.ref == 'refs/heads/develop'
+    name: Calculate Version
+    runs-on: ubuntu-latest
+    needs: release-check
+    outputs:
+      semVer: ${{ steps.gitversion.outputs.semVer }}
+    steps:
+      # gitversion/execute step omitted for brevity
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0
+        with:
+          versionSpec: '6.x'
+          includePrerelease: true
+      - name: Determine Version
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v0
+
   build:
+    if: always()
     name: Build
     runs-on: ubuntu-latest
     steps:
@@ -20,6 +48,33 @@ jobs:
         with:
           push: true
           tags: |
-            duratm/pycount-backend:dev
+            duratm/pycount-backend:latest
+            duratm/pycount-backend:${{ env.SEMVER }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  update-manifests:
+    if: always()
+    name: Update Manifests
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: master
+      - run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "username@users.noreply.github.com"
+          git merge origin/develop --ff-only
+      - name: Install yq
+        uses: mikefarah/yq@v4
+      - name: Update manifests
+        run: |
+          yq eval -i '.spec.template.spec.containers[0].image = "duratm/pycount-backend:${{ needs.build.outputs.semVer }}"' kubernetes/backend/pycount-backend-deploy.yaml
+      - name: Commit and push changes
+        run: |
+          git add .
+          git commit -m "Update manifests to version ${{ needs.build.outputs.semVer }}"
+          git push
