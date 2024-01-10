@@ -58,6 +58,7 @@ Route.group(() => {
 
   Route.group(() => {
     Route.get('/', 'UserController.index')
+    Route.get('/:id', 'UserController.groupUsers')
   }).prefix('/users')
 })
   .prefix('/api')

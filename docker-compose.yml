@@ -14,26 +14,26 @@ services:
     ports:
       - 5432:5432
 
-  pycount-backend:
-    image: pycount-backend:dev
-    container_name: pycount-backend
-    restart: always
-    depends_on:
-      - postgres
-    build:
-      context: .
-      target: dependencies
-    ports:
-      - ${PORT}:${PORT}
-      - 9229:9229
-    env_file:
-      - .env
-    environment:
-      - PG_HOST=postgres
-      - REDIS_HOST=redis
-    volumes:
-      - ./:/home/node/app
-    command: dumb-init node ace serve --watch --node-args="--inspect=0.0.0.0"
+#  pycount-backend:
+#    image: pycount-backend:dev
+#    container_name: pycount-backend
+#    restart: always
+#    depends_on:
+#      - postgres
+#    build:
+#      context: .
+#      target: dependencies
+#    ports:
+#      - ${PORT}:${PORT}
+#      - 9229:9229
+#    env_file:
+#      - .env
+#    environment:
+#      - PG_HOST=postgres
+#      - REDIS_HOST=redis
+#    volumes:
+#      - ./:/home/node/app
+#    command: dumb-init node ace serve --watch --node-args="--inspect=0.0.0.0"
 
 volumes:
   postgres_volume:
