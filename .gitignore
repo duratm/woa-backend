@@ -6,3 +6,5 @@ coverage
 .env
 .idea
 tmp
+kubernetes/database/pycount-database-config.yaml
+

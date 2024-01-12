@@ -23,4 +23,11 @@ export default class ExpenseController {
     }
     return httpContextContract.response.created(expense)
   }
+
+  public async destroy(httpContextContract: HttpContextContract) {
+    let expenseId = httpContextContract.params.id
+    const expense = await Expense.findOrFail(expenseId)
+    await expense.delete()
+    return httpContextContract.response.ok('Expense deleted')
+  }
 }
