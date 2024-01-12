@@ -72,7 +72,10 @@ export default class AuthController {
     const userMail = await User.findBy('email', email)
     const useUsername = await User.findBy('username', username)
     if (userMail !== null || useUsername !== null) {
-      return response.unauthorized({ error: 'User already exists' })
+      if (userMail !== null) {
+        return response.unauthorized({ error: 'email' })
+      }
+      return response.unauthorized({ error: 'user' })
     } else {
       const user = await User.create({ email, password, avatarUrl, username })
       const token = await auth.use('api').attempt(email, password, { expiresIn: '3 hours' })
