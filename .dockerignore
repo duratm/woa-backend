@@ -17,4 +17,4 @@ docker-compose*
 *.md
 .git
 .gitignore
-kubernetes/database/pycount-database-config.yaml
+kubernetes/secrets/*
