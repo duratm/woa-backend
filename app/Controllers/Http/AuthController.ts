@@ -90,4 +90,45 @@ export default class AuthController {
       return response.ok(user)
     }
   }
+
+  public async update({ auth, request, response }: HttpContextContract) {
+    const user = auth.user
+    if (user) {
+      const image = request.file('avatarUrl')
+      if (image !== null) {
+        const avatarUrl = request.input('username') + '.' + image.extname
+        await image.moveToDisk(
+          '',
+          {
+            name: avatarUrl,
+            overwrite: true,
+            contentType: image.type,
+          },
+          's3'
+        )
+        user.avatarUrl = avatarUrl
+      }
+      if (request.input('password') !== '') {
+        user.password = request.input('password')
+      }
+      if (request.input('email') !== user.email) {
+        const userMail = await User.findBy('email', request.input('email'))
+        if (userMail !== null) {
+          return response.unauthorized({ error: 'email' })
+        }
+        user.email = request.input('email')
+      }
+      if (request.input('username') !== user.username) {
+        const useUsername = await User.findBy('username', request.input('username'))
+        if (useUsername !== null) {
+          return response.unauthorized({ error: 'user' })
+        }
+        user.username = request.input('username')
+      }
+      await user.save()
+      user.avatarUrl = await Drive.getSignedUrl(user.avatarUrl)
+      return response.ok(user)
+    }
+    return response.unauthorized({ error: 'You are not logged in' })
+  }
 }

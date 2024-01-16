@@ -31,6 +31,7 @@ Route.group(() => {
   Route.group(() => {
     Route.get('/logout', 'AuthController.logout')
     Route.get('/', 'AuthController.me')
+    Route.patch('/', 'AuthController.update')
   })
     .prefix('/me')
     .middleware('auth')
