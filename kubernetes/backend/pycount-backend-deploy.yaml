@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: pycount-backend-deploy
-          image: duratm/pycount-backend:0.2.0-alpha.10
+          image: duratm/pycount-backend:0.2.3-alpha.2
           imagePullPolicy: "Always"
           ports:
             - containerPort: 3333
