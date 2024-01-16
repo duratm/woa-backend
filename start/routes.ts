@@ -56,6 +56,7 @@ Route.group(() => {
   Route.group(() => {
     Route.post('/', 'ExpenseController.store')
     Route.delete('/:id', 'ExpenseController.destroy')
+    Route.patch('/', 'GroupController.updateBorrowers')
   }).prefix('/expenses')
 
   Route.group(() => {

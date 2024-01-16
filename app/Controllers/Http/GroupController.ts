@@ -73,6 +73,30 @@ export default class GroupController {
     return { id: group.id, name: group.name, expenses: expenses }
   }
 
+  public async updateBorrowers(httpContextContract: HttpContextContract) {
+    const data = JSON.parse(httpContextContract.request.raw() ?? '{}')
+    const groupId = data.groupId
+    const expenses = data.expenses
+    const group = await Group.findOrFail(groupId)
+    for (const expense of expenses) {
+      const expenseId = expense.id
+      const borrowers = expense.borrowers
+      const expenseModel = await group
+        .related('expenses')
+        .query()
+        .where('id', parseInt(expenseId))
+        .firstOrFail()
+      for (const borrower of borrowers) {
+        await expenseModel
+          .related('borrowers')
+          .pivotQuery()
+          .where('user_id', '=', parseInt(borrower.id))
+          .update({ is_paid: borrower.is_paid })
+      }
+    }
+    return httpContextContract.response.ok(group)
+  }
+
   public async showUsers(httpContextContract: HttpContextContract) {
     let groupId = httpContextContract.params.id
     if (isInt(groupId)) {
