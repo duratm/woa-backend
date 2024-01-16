@@ -92,10 +92,11 @@ export default class AuthController {
   }
 
   public async update({ auth, request, response }: HttpContextContract) {
-    const user = auth.user
+    let user = auth.user
     if (user) {
       const image = request.file('avatarUrl')
       if (image !== null) {
+        console.log(image)
         const avatarUrl = request.input('username') + '.' + image.extname
         await image.moveToDisk(
           '',
@@ -106,26 +107,33 @@ export default class AuthController {
           },
           's3'
         )
-        user.avatarUrl = avatarUrl
+        await User.query().where('id', user.id).update({ avatarUrl: avatarUrl })
       }
-      if (request.input('password') !== '') {
-        user.password = request.input('password')
+      if (request.input('password') !== '' && request.input('password') !== null) {
+        await User.query()
+          .where('id', user.id)
+          .update({ password: request.input('password') })
       }
+
       if (request.input('email') !== user.email) {
         const userMail = await User.findBy('email', request.input('email'))
         if (userMail !== null) {
           return response.unauthorized({ error: 'email' })
         }
-        user.email = request.input('email')
+        await User.query()
+          .where('id', user.id)
+          .update({ email: request.input('email') })
       }
       if (request.input('username') !== user.username) {
         const useUsername = await User.findBy('username', request.input('username'))
         if (useUsername !== null) {
           return response.unauthorized({ error: 'user' })
         }
-        user.username = request.input('username')
+        await User.query()
+          .where('id', user.id)
+          .update({ username: request.input('username') })
       }
-      await user.save()
+      user = await User.findOrFail(user.id)
       user.avatarUrl = await Drive.getSignedUrl(user.avatarUrl)
       return response.ok(user)
     }
