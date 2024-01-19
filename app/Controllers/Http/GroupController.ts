@@ -121,4 +121,27 @@ export default class GroupController {
     console.log(expenses)
     return { groups: { id: group.id, name: group.name, expenses: expenses }, users: users }
   }
+
+  public async update(httpContextContract: HttpContextContract) {
+    const data = JSON.parse(httpContextContract.request.raw() ?? '{}')
+    const group = await Group.findOrFail(data.groupId)
+    group.name = data.name
+    const groupUsers = await group.related('users').pivotQuery().select('user_id')
+    console.log(groupUsers)
+    for (const user of data.users) {
+      if (!groupUsers.some((guser) => parseInt(guser.user_id) === parseInt(user.id))) {
+        console.log(user.id)
+        await group.related('users').attach([user.id])
+      }
+    }
+    for (const user of groupUsers) {
+      if (!data.users.some((guser) => parseInt(guser.id) === parseInt(user.user_id))) {
+        console.log(user.user_id)
+        console.log(data.users.map((user) => user.id))
+        await group.related('users').detach([user.user_id])
+      }
+    }
+    await group.save()
+    return this.index(httpContextContract)
+  }
 }
