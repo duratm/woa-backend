@@ -21,3 +21,13 @@ spec:
           envFrom:
             - configMapRef:
                 name: pycount-database-conf
+          lifecycle:
+            postStart:
+              exec:
+                # Lance la migration
+                command:
+                  [
+                    "/bin/sh",
+                    "-c",
+                    "node ace migration:run --force",
+                  ]
