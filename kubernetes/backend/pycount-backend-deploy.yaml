@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: pycount-backend-deploy
-          image: duratm/pycount-backend:1.1.0-alpha.1
+          image: duratm/pycount-backend:1.0.4-alpha.5
           imagePullPolicy: "Always"
           ports:
             - containerPort: 3333
@@ -25,9 +25,4 @@ spec:
             postStart:
               exec:
                 # Lance la migration
-                command:
-                  [
-                    "/bin/sh",
-                    "-c",
-                    "node ace migration:run --force",
-                  ]
+                command: ["/bin/sh", "-c", "node ace migration:run --force"]
