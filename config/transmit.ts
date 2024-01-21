@@ -1,7 +1,7 @@
 import { TransmitConfig } from '@ioc:Adonis/Addons/Transmit'
 
 const transmitConfig: TransmitConfig = {
-  transport: false,
+  transport: null,
 }
 
 export default transmitConfig
