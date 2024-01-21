@@ -19,6 +19,13 @@
 */
 
 import Route from '@ioc:Adonis/Core/Route'
+// import transmit from '@ioc:Adonis/Addons/Transmit'
+
+// transmit
+//   .subscribeToChannel('test', 'test', async (payload) => {
+//     console.log(payload)
+//   })
+//   .then((r) => console.log(r))
 
 Route.get('/hello', async () => {
   return { hello: 'world' }
@@ -51,6 +58,7 @@ Route.group(() => {
       Route.get('/:id', 'GroupController.show')
       Route.get('/users/:id', 'GroupController.showUsers')
     }).prefix('/show')
+    Route.delete('/:id/users/:userId', 'GroupController.removeUser')
   }).prefix('/groups')
 
   Route.group(() => {
@@ -63,6 +71,11 @@ Route.group(() => {
     Route.get('/', 'UserController.index')
     Route.get('/:id', 'UserController.groupUsers')
   }).prefix('/users')
+
+  Route.group(() => {
+    Route.get('/', 'NotificationController.register')
+    Route.get('/test', 'NotificationController.sendMessage')
+  }).prefix('/notifications')
 })
   .prefix('/api')
   .middleware('auth')

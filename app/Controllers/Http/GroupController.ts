@@ -144,4 +144,11 @@ export default class GroupController {
     await group.save()
     return this.index(httpContextContract)
   }
+  public async removeUser(httpContextContract: HttpContextContract) {
+    const groupId = httpContextContract.params.id
+    const userId = httpContextContract.params.userId
+    const group = await Group.findOrFail(groupId)
+    await group.related('users').detach([userId])
+    return this.index(httpContextContract)
+  }
 }
